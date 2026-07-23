@@ -1,65 +1,77 @@
-import Image from "next/image";
+import Link from "next/link";
+import { formatEventDate, listEvents } from "../lib/api";
 
 export default function Home() {
+  const events = listEvents();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#ffd6a5_0%,#fff4dd_28%,#f7fbff_62%,#ffffff_100%)] px-6 py-10 text-neutral-950">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
+        <section className="grid gap-8 rounded-[2.5rem] bg-[#111827] px-8 py-10 text-white shadow-[0_30px_80px_rgba(15,23,42,0.22)] lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.22em] text-amber-200">Fast MVP reservations</p>
+            <h1 className="max-w-2xl text-5xl font-semibold tracking-tight sm:text-6xl">
+              Launch the first live reservation flow before building the rest of the platform.
+            </h1>
+            <p className="max-w-xl text-lg leading-8 text-slate-300">
+              This MVP keeps inventory validation in the Azure Function and uses a tiny in-repo event catalog so the web app can ship without a new read API.
+            </p>
+          </div>
+
+          <div className="grid gap-4 self-end rounded-4xl bg-white/6 p-6 backdrop-blur-sm sm:grid-cols-3 lg:grid-cols-1">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Flow</p>
+              <p className="mt-2 text-lg font-medium text-white">Landing page to reservation success</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Backend</p>
+              <p className="mt-2 text-lg font-medium text-white">Existing Azure Function only</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Inventory</p>
+              <p className="mt-2 text-lg font-medium text-white">Cosmos-enforced seat counts</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-5">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">Public events</p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950">Choose an event to reserve</h2>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-neutral-600">
+              The catalog is static for speed. Reservation success still depends on live inventory in Cosmos when the form is submitted.
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-3">
+            {events.map((event) => (
+              <article key={event.id} className="flex h-full flex-col rounded-4xl border border-black/10 bg-white p-6 shadow-[0_18px_50px_rgba(17,24,39,0.08)]">
+                <div className="space-y-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">{formatEventDate(event.startIso)}</p>
+                  <h3 className="text-2xl font-semibold tracking-tight text-neutral-950">{event.title}</h3>
+                  <p className="text-sm font-medium text-neutral-700">{event.venue} · {event.city}</p>
+                  <p className="text-base leading-7 text-neutral-600">{event.blurb}</p>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  <p className="rounded-2xl bg-amber-100 px-4 py-3 text-sm font-medium text-amber-900">{event.availabilityMessage}</p>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-semibold text-neutral-900">{event.priceLabel}</span>
+                    <Link
+                      href={`/events/${event.slug}`}
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-950 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-neutral-950 hover:text-white"
+                    >
+                      View event
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
