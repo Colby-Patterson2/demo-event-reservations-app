@@ -1,0 +1,32 @@
+[
+  {
+    "id": "event-harbor-jazz-night",
+    "type": "eventInventory",
+    "eventId": "harbor-jazz-night",
+    "title": "Harbor Jazz Night",
+    "totalSeats": 48,
+    "availableSeats": 48,
+    "createdAt": "2026-07-23T00:00:00Z",
+    "updatedAt": "2026-07-23T00:00:00Z"
+  },
+  {
+    "id": "event-sunset-food-lab",
+    "type": "eventInventory",
+    "eventId": "sunset-food-lab",
+    "title": "Sunset Food Lab",
+    "totalSeats": 24,
+    "availableSeats": 24,
+    "createdAt": "2026-07-23T00:00:00Z",
+    "updatedAt": "2026-07-23T00:00:00Z"
+  },
+  {
+    "id": "event-midnight-film-club",
+    "type": "eventInventory",
+    "eventId": "midnight-film-club",
+    "title": "Midnight Film Club",
+    "totalSeats": 36,
+    "availableSeats": 36,
+    "createdAt": "2026-07-23T00:00:00Z",
+    "updatedAt": "2026-07-23T00:00:00Z"
+  }
+]
