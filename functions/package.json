@@ -3,7 +3,7 @@
 	"name": "events-app-functions",
 	"version": "1.0.0",
 	"private": true,
-	"main": "dist/src/functions/*.js",
+	"main": "dist/functions/*.js",
 	"scripts": {
 		"build": "tsc",
 		"clean": "rimraf dist",
@@ -11,6 +11,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@azure/identity": "^4.7.0",
 		"@azure/cosmos": "^4.3.0",
 		"@azure/functions": "^4.8.0"
 	},
