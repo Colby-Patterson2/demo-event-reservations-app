@@ -216,7 +216,7 @@ curl -X POST http://localhost:7071/api/reserve-seat \
 
 | Item | Decision | Rationale |
 |------|----------|-----------|
-| **Cosmos tier** | Free (if eligible) or Autoscale | Lowest cost for MVP. Autoscale avoids cold starts. |
+| **Cosmos tier** | Free (if eligible) or Autoscale | Lowest cost for MVP. Autoscale adjusts RU/s to accommodate variable load and helps control throughput costs. |
 | **Database name** | `reservations` | Clear intent. Keeps all event data together. |
 | **Container name** | `events` | Short name for partition key hierarchy. |
 | **Partition key** | `/eventId` | Matches `ReserveSeat.ts` lookup pattern. Ensures inventory reads/writes hit same logical partition. |

@@ -1,0 +1,38 @@
+name: events-app
+metadata:
+  template: ""
+services:
+  web:
+    project: ./web
+    language: ts
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: .
+  function:
+    project: ./functions
+    language: ts
+    host: function
+hooks:
+  postprovision:
+    windows:
+      shell: pwsh
+      run: ./infra/hooks/postprovision.ps1
+      interactive: false
+      continueOnError: false
+    linux:
+      shell: pwsh
+      run: ./infra/hooks/postprovision.ps1
+      interactive: false
+      continueOnError: false
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: ./infra/hooks/postdeploy.ps1
+      interactive: false
+      continueOnError: false
+    linux:
+      shell: pwsh
+      run: ./infra/hooks/postdeploy.ps1
+      interactive: false
+      continueOnError: false

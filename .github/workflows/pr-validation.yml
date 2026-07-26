@@ -1,0 +1,38 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Lint web
+        working-directory: ./web
+        run: |
+          npm ci
+          npm run lint
+
+      - name: Typecheck functions
+        working-directory: ./functions
+        run: |
+          npm ci
+          npm run typecheck
+
+      - name: Docker build check
+        run: docker build -t events-web-test ./web
