@@ -37,7 +37,7 @@ export default function ReservationForm({ eventId, eventTitle }: Readonly<Reserv
 			<div className="space-y-2">
 				<h2 className="text-xl font-semibold text-neutral-950">Reserve seats</h2>
 				<p className="text-sm leading-6 text-neutral-600">
-					Submit once for {eventTitle}. Inventory is checked live when the reservation request reaches the backend.
+					Submit once for {eventTitle}. Inventory is checked live.
 				</p>
 			</div>
 

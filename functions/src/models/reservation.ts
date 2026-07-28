@@ -1,12 +1,12 @@
-export type ReserveSeatRequest = {
+export interface ReserveSeatRequest {
   eventId: string;
   fullName: string;
   email: string;
   seats: number;
   notes?: string;
-};
+}
 
-export type ReservationRecord = {
+export interface ReservationRecord {
   id: string;
   type: "reservation";
   eventId: string;
@@ -15,14 +15,15 @@ export type ReservationRecord = {
   seats: number;
   notes?: string;
   createdAt: string;
-};
+}
 
-export type EventInventory = {
+export interface EventInventory {
   id: string;
   type: "eventInventory";
   eventId: string;
   title: string;
   totalSeats: number;
   availableSeats: number;
+  createdAt: string;
   updatedAt: string;
-};
+}

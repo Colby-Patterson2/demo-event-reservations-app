@@ -17,11 +17,13 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 
@@ -39,7 +41,7 @@ jobs:
           npm run typecheck
           npm run build
 
-      - name: Docker build check
+      - name: Docker build check (web only)
         run: docker build -t events-web-test ./web
 
       - name: Azure login (OIDC)
@@ -50,14 +52,52 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Install azd
-        uses: azure/azd-install-action@v1
+        uses: Azure/setup-azd@v2
 
       - name: Provision infrastructure
         run: azd provision --no-prompt
         env:
           AZURE_ENV_NAME: mvp
 
-      - name: Deploy application
+      - name: Deploy functions
         run: azd deploy --no-prompt
         env:
           AZURE_ENV_NAME: mvp
+
+      - name: Get azd outputs
+        id: env
+        run: |
+          echo "rg=$(azd env get-value AZURE_RESOURCE_GROUP)" >> $GITHUB_OUTPUT
+          echo "acrServer=$(azd env get-value acrLoginServer)" >> $GITHUB_OUTPUT
+          echo "funcApp=$(azd env get-value functionAppName)" >> $GITHUB_OUTPUT
+
+      - name: Get function key
+        id: funcKey
+        run: |
+          key=$(az functionapp keys list \
+            --name ${{ steps.env.outputs.funcApp }} \
+            --resource-group ${{ steps.env.outputs.rg }} \
+            --query functionKeys.default -o tsv)
+          echo "::add-mask::$key"
+          echo "key=$key" >> $GITHUB_OUTPUT
+
+      - name: Build and push web Docker image
+        run: |
+          ACR_SERVER="${{ steps.env.outputs.acrServer }}"
+          ACR_NAME="${ACR_SERVER%%.*}"
+          az acr login --name "$ACR_NAME"
+          IMAGE_TAG="${ACR_SERVER}/events-web:${{ github.sha }}"
+          docker build \
+            -t "$IMAGE_TAG" \
+            -t "${ACR_SERVER}/events-web:latest" \
+            ./web
+          docker push "${ACR_SERVER}/events-web" --all-tags
+
+      - name: Update Container App
+        run: |
+          az containerapp update \
+            --name aca-events-web \
+            --resource-group ${{ steps.env.outputs.rg }} \
+            --image "${{ steps.env.outputs.acrServer }}/events-web:${{ github.sha }}" \
+            --secrets "function-key=${{ steps.funcKey.outputs.key }}" \
+            --output none

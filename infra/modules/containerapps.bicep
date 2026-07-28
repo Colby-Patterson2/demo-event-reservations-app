@@ -44,9 +44,16 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     managedEnvironmentId: containerAppEnvironment.id
     configuration: {
       activeRevisionsMode: 'Single'
+      secrets: [
+        {
+          name: 'function-key'
+          value: 'placeholder-updated-by-github-actions'
+        }
+      ]
       ingress: {
         external: true
         targetPort: 3000
+        transport: 'auto'
       }
       registries: [
         {
@@ -71,7 +78,31 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             }
             {
               name: 'AZURE_FUNCTION_KEY'
-              value: 'placeholder-updated-by-postprovision-hook'
+              secretRef: 'function-key'
+            }
+          ]
+          probes: [
+            {
+              type: 'Liveness'
+              httpGet: {
+                path: '/'
+                port: 3000
+              }
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 5
+              failureThreshold: 3
+            }
+            {
+              type: 'Readiness'
+              httpGet: {
+                path: '/'
+                port: 3000
+              }
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 3
+              failureThreshold: 3
             }
           ]
         }

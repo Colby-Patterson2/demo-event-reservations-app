@@ -7,18 +7,21 @@ param appInsightsConnectionString string
 param functionIdentityResourceId string
 
 var functionAppName = 'func-events-${environmentName}'
+var safeEnv = take(replace(toLower(environmentName), '-', ''), 14)
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
   name: storageAccountName
 }
 
-var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
 
 resource serverFarm 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: 'ASP-${functionAppName}'
   location: location
   kind: 'functionapp'
-  properties: {}
+  properties: {
+    reserved: true
+  }
   sku: {
     name: 'Y1'
     tier: 'Dynamic'
@@ -28,7 +31,7 @@ resource serverFarm 'Microsoft.Web/serverfarms@2023-12-01' = {
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   tags: {
     'azd-service-name': 'function'
   }
@@ -39,9 +42,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
   }
   properties: {
+    reserved: true
     serverFarmId: serverFarm.id
     siteConfig: {
-      windowsFxVersion: 'Node|22'
+      linuxFxVersion: 'Node|22'
       appSettings: [
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
@@ -52,8 +56,28 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: '~4'
         }
         {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '0'
+        }
+        {
+          name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
+          value: '1'
+        }
+        {
+          name: 'ENABLE_ORYX_BUILD'
+          value: 'true'
+        }
+        {
           name: 'AzureWebJobsStorage'
-          value: storageAccountConnectionString
+          value: storageConnectionString
+        }
+        {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: storageConnectionString
+        }
+        {
+          name: 'WEBSITE_CONTENTSHARE'
+          value: toLower(functionAppName)
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
