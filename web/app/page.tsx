@@ -11,7 +11,7 @@ export default function Home() {
           <div className="space-y-6">
             <p className="text-xs uppercase tracking-[0.22em] text-amber-200">Fast MVP reservations</p>
             <h1 className="max-w-2xl text-5xl font-semibold tracking-tight sm:text-6xl">
-              Launch the first live reservation flow before building the rest of the platform.
+              Reservations Made Easy
             </h1>
             <p className="max-w-xl text-lg leading-8 text-slate-300">
               This MVP keeps inventory validation in the Azure Function and uses a tiny in-repo event catalog so the web app can ship without a new read API.

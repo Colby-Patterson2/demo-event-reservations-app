@@ -1,18 +1,21 @@
 name: events-app
 metadata:
   template: ""
+
 services:
-  web:
-    project: ./web
-    language: ts
-    host: containerapp
-    docker:
-      path: ./Dockerfile
-      context: .
   function:
     project: ./functions
     language: ts
     host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: npm install; npm run build
+        posix:
+          shell: sh
+          run: npm install && npm run build
+
 hooks:
   postprovision:
     windows:

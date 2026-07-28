@@ -1,23 +1,22 @@
-
 {
-	"name": "events-app-functions",
-	"version": "1.0.0",
-	"private": true,
-	"main": "dist/functions/*.js",
-	"scripts": {
-		"build": "tsc",
-		"clean": "rimraf dist",
-		"start": "func start",
-		"typecheck": "tsc --noEmit"
-	},
-	"dependencies": {
-		"@azure/identity": "^4.7.0",
-		"@azure/cosmos": "^4.3.0",
-		"@azure/functions": "^4.8.0"
-	},
-	"devDependencies": {
-		"@types/node": "^20.19.0",
-		"rimraf": "^6.0.1",
-		"typescript": "^5.8.3"
-	}
+  "name": "events-app-functions",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/src/functions/*.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "start": "func start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.7.0",
+    "@azure/cosmos": "^4.4.0",
+    "@azure/functions": "^4.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
+  }
 }

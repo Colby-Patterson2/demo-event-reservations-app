@@ -2,7 +2,7 @@ targetScope = 'subscription'
 
 @minLength(1)
 @maxLength(14)
-@description('Suffix applied to all resource names. Use lowercase alphanumeric values only (e.g. mvp, prod, dev).')
+@description('Suffix applied to all resource names. Use lowercase alphanumeric values only.')
 param environmentName string = 'mvp'
 
 @minLength(1)
@@ -35,6 +35,9 @@ param acrSku string = 'Basic'
 @maxValue(730)
 @description('Log Analytics workspace retention in days.')
 param appInsightsRetentionDays int = 30
+
+@description('Principal ID of the identity running azd (user or SP). Granted Key Vault Secrets Officer for postdeploy hook.')
+param deploymentPrincipalId string = ''
 
 var tags = {
   environment: environmentName
@@ -98,6 +101,7 @@ module keyvault 'modules/keyvault.bicep' = {
     environmentName: safeEnvironmentName
     functionIdentityPrincipalId: identity.outputs.functionIdentityPrincipalId
     webIdentityPrincipalId: identity.outputs.webIdentityPrincipalId
+    deploymentPrincipalId: deploymentPrincipalId
   }
 }
 

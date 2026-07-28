@@ -83,12 +83,36 @@ export async function reserveSeatAction(
     const body = await readJsonSafe(response);
 
     if (!response.ok) {
+      if (body?.error || body?.message) {
+        return {
+          ok: false,
+          message: body.error || body.message,
+        };
+      }
+
+      console.error(
+        "[reserveSeatAction] Upstream function returned non-JSON error.",
+        { status: response.status, statusText: response.statusText }
+      );
+
+      if (response.status === 401) {
+        return {
+          ok: false,
+          message:
+            "Authentication failed when contacting the reservation service. Check that the function key secret has been deployed.",
+        };
+      }
+      if (response.status === 404) {
+        return {
+          ok: false,
+          message:
+            "Reservation service endpoint not found. Verify that the function has been deployed.",
+        };
+      }
+
       return {
         ok: false,
-        message:
-          body?.error ||
-          body?.message ||
-          "Reservation request failed. Please try again.",
+        message: `Reservation service returned HTTP ${response.status}.`,
       };
     }
 

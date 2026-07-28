@@ -19,6 +19,12 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-08-15' = {
         failoverPriority: 0
       }
     ]
+    backupPolicy: {
+      type: 'Continuous'
+      continuousModeProperties: {
+        tier: 'Continuous7Days'
+      }
+    }
   }
 }
 
