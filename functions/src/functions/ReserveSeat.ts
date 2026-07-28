@@ -27,6 +27,10 @@ async function reserveSeatHandler(
     return badRequest("Request body must be valid JSON.");
   }
 
+  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+    return badRequest("Request body must be a valid JSON object.");
+  }
+
   const validationError = validateReserveSeatPayload(payload);
   if (validationError) {
     return badRequest(validationError);

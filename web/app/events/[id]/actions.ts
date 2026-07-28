@@ -16,11 +16,17 @@ type ReserveSeatPayload = {
   notes?: string;
 };
 
+type JsonResponseBody = {
+  error?: string;
+  message?: string;
+  reservationId?: string;
+};
+
 function asString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-async function readJsonSafe(response: Response): Promise<any | null> {
+async function readJsonSafe(response: Response): Promise<JsonResponseBody | null> {
   try {
     return await response.json();
   } catch {
