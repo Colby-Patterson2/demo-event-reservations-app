@@ -72,14 +72,16 @@ jobs:
           echo "funcApp=$(azd env get-value functionAppName)" >> $GITHUB_OUTPUT
 
       - name: Get function key
-        id: funcKey
+        env:
+          FUNC_APP: ${{ steps.env.outputs.funcApp }}
+          RG: ${{ steps.env.outputs.rg }}
         run: |
           key=$(az functionapp keys list \
-            --name ${{ steps.env.outputs.funcApp }} \
-            --resource-group ${{ steps.env.outputs.rg }} \
+            --name "$FUNC_APP" \
+            --resource-group "$RG" \
             --query functionKeys.default -o tsv)
           echo "::add-mask::$key"
-          echo "key=$key" >> $GITHUB_OUTPUT
+          echo "functionKey=$key" >> $GITHUB_ENV
 
       - name: Build and push web Docker image
         run: |
@@ -99,5 +101,5 @@ jobs:
             --name aca-events-web \
             --resource-group ${{ steps.env.outputs.rg }} \
             --image "${{ steps.env.outputs.acrServer }}/events-web:${{ github.sha }}" \
-            --secrets "function-key=${{ steps.funcKey.outputs.key }}" \
+            --secrets "function-key=${{ env.functionKey }}" \
             --output none

@@ -49,7 +49,7 @@ const eventCatalog: EventCatalogEntry[] = [
 ];
 
 export function listEvents(): EventListItem[] {
-	return eventCatalog.map(({ description: _description, capacityLabel: _capacityLabel, ...event }) => event);
+	return eventCatalog as EventListItem[];
 }
 
 export function getEventById(id: string): EventCatalogEntry | undefined {
