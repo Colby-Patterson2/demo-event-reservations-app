@@ -92,7 +92,7 @@ export async function reserveSeatAction(
       if (body?.error || body?.message) {
         return {
           ok: false,
-          message: body.error || body.message,
+          message: body.error || body.message || "Unknown error",
         };
       }
 
