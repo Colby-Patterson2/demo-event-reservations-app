@@ -54,23 +54,13 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v2
 
-      - name: Azd login (OIDC)
-        run: |
-          azd auth login \
-            --client-id "$AZURE_CLIENT_ID" \
-            --tenant-id "$AZURE_TENANT_ID" \
-            --federated-credential-provider "github"
-          env:
-            AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-            AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
       - name: Provision infrastructure
-        run: azd provision --no-prompt
+        run: azd provision --auth-type azurecli --no-prompt
         env:
           AZURE_ENV_NAME: mvp
 
       - name: Deploy functions
-        run: azd deploy --no-prompt
+        run: azd deploy --auth-type azurecli --no-prompt
         env:
           AZURE_ENV_NAME: mvp
 
