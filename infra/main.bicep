@@ -149,5 +149,6 @@ output AZURE_LOCATION string = resourceGroup.location
 output acrLoginServer string = acr.outputs.loginServer
 output functionAppName string = functionsModule.outputs.functionAppName
 output containerAppFqdn string = containerApps.outputs.fqdn
+output containerAppName string = containerApps.outputs.containerAppName
 output keyVaultName string = keyvault.outputs.name
 output cosmosEndpoint string = cosmos.outputs.endpoint
