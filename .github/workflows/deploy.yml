@@ -70,8 +70,10 @@ jobs:
           echo "rg=$(azd env get-value AZURE_RESOURCE_GROUP)" >> $GITHUB_OUTPUT
           echo "acrServer=$(azd env get-value acrLoginServer)" >> $GITHUB_OUTPUT
           echo "funcApp=$(azd env get-value functionAppName)" >> $GITHUB_OUTPUT
+          echo "containerApp=$(azd env get-value containerAppName)" >> $GITHUB_OUTPUT
 
       - name: Get function key
+        id: function-key
         env:
           FUNC_APP: ${{ steps.env.outputs.funcApp }}
           RG: ${{ steps.env.outputs.rg }}
@@ -82,6 +84,7 @@ jobs:
             --query functionKeys.default -o tsv)
           echo "::add-mask::$key"
           echo "functionKey=$key" >> $GITHUB_ENV
+          echo "functionKey=$key" >> $GITHUB_OUTPUT
 
       - name: Build and push web Docker image
         run: |
@@ -98,8 +101,8 @@ jobs:
       - name: Update Container App
         run: |
           az containerapp update \
-            --name aca-events-web \
-            --resource-group ${{ steps.env.outputs.rg }} \
+            --name "${{ steps.env.outputs.containerApp }}" \
+            --resource-group "${{ steps.env.outputs.rg }}" \
             --image "${{ steps.env.outputs.acrServer }}/events-web:${{ github.sha }}" \
-            --secrets "function-key=${{ env.functionKey }}" \
+            --secrets "function-key=${{ steps.function-key.outputs.functionKey }}" \
             --output none
